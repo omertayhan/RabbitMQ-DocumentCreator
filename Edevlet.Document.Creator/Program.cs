@@ -21,7 +21,7 @@ namespace Edvelet.Document.Creator
 
         static void Main(string[] args)
         {
-            var connection = GetConnection();
+            _connection = GetConnection(); // _connection'ı başlat
 
             channel.ExchangeDeclare(documentCreateExchange, "direct");
 
@@ -37,7 +37,7 @@ namespace Edvelet.Document.Creator
             {
                 var modelJson = (Encoding.UTF8.GetString(ea.Body.ToArray()));
                 var model = JsonConvert.DeserializeObject<CreateDocumentModel>(modelJson);
-                AddLog($"Received Data: {modelJson}");
+                Console.WriteLine($"Received Data: {modelJson}");
 
                 //Create Document
 
