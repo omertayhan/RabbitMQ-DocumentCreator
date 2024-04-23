@@ -10,7 +10,7 @@ namespace Edevlet.Document.Request
     {
         IConnection _connection;
         private readonly string createDocument = "create_document_queue";
-        private readonly string documnentCreated = "document_created_queue";
+        private readonly string documentCreated = "document_created_queue";
         private readonly string documentCreateExchange = "document_create_exchange";
 
         private IModel _channel;
@@ -37,10 +37,10 @@ namespace Edevlet.Document.Request
             consumerEvent.Received += (ch, ea) =>
             {
                 var modelReceived = JsonConvert.DeserializeObject<CreateDocumentModel>(Encoding.UTF8.GetString(ea.Body.ToArray()));
-                AddLog($"Received Data Url: {modelReceived}" );
+                AddLog($"Received Data Url: {modelReceived.Url}" );
             };
 
-            channel.BasicConsume(documnentCreated, true, consumerEvent);
+            channel.BasicConsume(documentCreated, true, consumerEvent);
         }
 
         private void connection_Click(object sender, EventArgs e)
@@ -57,8 +57,8 @@ namespace Edevlet.Document.Request
                     channel.QueueDeclare(createDocument, false, false, false);
                     channel.QueueBind(createDocument, documentCreateExchange, createDocument);
 
-                    channel.QueueDeclare(documnentCreated, false, false, false);
-                    channel.QueueBind(documnentCreated, documentCreateExchange, documnentCreated);
+                    channel.QueueDeclare(documentCreated, false, false, false);
+                    channel.QueueBind(documentCreated, documentCreateExchange, documentCreated);
 
                     AddLog("Connection is open now!");
                 }
