@@ -1,6 +1,7 @@
 using Edevlet.Document.Common;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System.Text;
 
 namespace Edevlet.Document.Request
@@ -29,6 +30,17 @@ namespace Edevlet.Document.Request
             };
 
             WriteToQueue(createDocument, model);
+
+            AddLog("Document is queued...");
+
+            var consumerEvent = new EventingBasicConsumer(channel);
+            consumerEvent.Received += (ch, ea) =>
+            {
+                var modelReceived = JsonConvert.DeserializeObject<CreateDocumentModel>(Encoding.UTF8.GetString(ea.Body.ToArray()));
+                AddLog($"Received Data Url: {modelReceived}" );
+            };
+
+            channel.BasicConsume(documnentCreated, true, consumerEvent);
         }
 
         private void connection_Click(object sender, EventArgs e)
